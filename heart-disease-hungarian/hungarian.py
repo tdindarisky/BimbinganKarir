@@ -23,7 +23,7 @@ import pickle
 
 
 
-with open("data/hungarian.data", encoding='Latin1') as file:
+with open("heart-disease-hungarian/data/hungarian.data", encoding='Latin1') as file:
   lines = [line.strip() for line in file]
 
 lines [0:10]
