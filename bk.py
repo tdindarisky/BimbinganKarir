@@ -462,6 +462,85 @@ plt.xlabel('True')
 plt.ylabel('Predict')
 plt.show()
 
+"""**Random Forest**"""
+
+rf_model = RandomForestClassifier()
+
+param_grid = {
+    "n_estimators": [100, 200],
+    "max_depth": [10, 15],
+    "min_samples_leaf": [1, 2],
+    "min_samples_split": [2, 5],
+    "max_features": ["sqrt", "log2"],
+    # "random_state": [42, 100, 200]
+}
+
+rf_model = RandomizedSearchCV(rf_model, param_grid, n_iter=100, cv=5, n_jobs=-1)
+
+rf_model.fit(X_train_normal, y_train_normal)
+
+best_params = rf_model.best_params_
+print(f"Best parameters : {best_params}")
+
+y_pred_rf = rf_model.predict(X_test_normal)
+
+#Evaluate the Random Foret model
+print("\nRandom Forest Model :")
+accuracy_rf_smote_normal_Tun = round(accuracy_score(y_test_normal, y_pred_rf),3)
+print("Accuracy: ", accuracy_rf_smote_normal_Tun)
+print("Classification Reprt:")
+print(classification_report(y_test_normal, y_pred_rf))
+
+evaluation(y_test_normal, y_pred_rf)
+
+cm = confusion_matrix(y_test_normal, y_pred_rf)
+
+plt.figure(figsize=(8,6))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+plt.title('Confusion Matrix')
+plt.xlabel('True')
+plt.ylabel('Predict')
+plt.show()
+
+"""**XGBoost**"""
+
+xgb_model = XGBClassifier()
+
+param_grid =  {
+    "max_depth": [3, 5, 7],
+    "learning_rate": [0.01, 0.1],
+    "n_estimators": [100, 200],
+    "gamma": [0, 0.1],
+    "colsample_bytree": [0.7, 0.8]
+}
+
+xgb_model = RandomizedSearchCV(xgb_model, param_grid, n_iter=10, cv=5, n_jobs=-1)
+
+xgb_model.fit(X_train_normal, y_train_normal)
+
+best_params = xgb_model.best_params_
+print(f"Best parameters: {best_params}")
+
+y_pred_xgb = xgb_model.predict(X_test_normal)
+
+# Evaluate the XGBoost model
+print("\nXGBoost Model: ")
+accuracy_xgb_smote_normal_Tun = round(accuracy_score(y_test_normal, y_pred_xgb),3)
+print("Accuracy:", accuracy_xgb_smote_normal_Tun)
+print("Classification Report:")
+print(classification_report(y_test_normal, y_pred_xgb))
+
+evaluation(y_test_normal, y_pred_xgb)
+
+cm = confusion_matrix(y_test_normal, y_pred_xgb)
+
+plt.figure(figsize=(8,6))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+plt.title('Confusion Matrix')
+plt.xlabel('True')
+plt.ylabel('Predict')
+plt.show()
+
 """**EVALUASI**
 
 Tahap berikutnya adalah tahap evaluasi data dan membandingkan antar algoritma yang menghasilkan akurasi terbaik.
@@ -504,7 +583,29 @@ for bar in bars:
   plt.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 2), ha='center', va='bottom')
 plt.show()
 
+# Data Frame
+model_compBest = pd.DataFrame({
+    'Model' : ['K-Nearest Neighbour Oversample Tunning', 'Random Forest Oversample',
+               'XGB Oversample Standarization Tunning'],
+    'Accuracy' : [accuracy_knn_smote_normal_Tun*100, accuracy_rf_smote_normal_Tun*100,
+                  accuracy_xgb_smote_normal_Tun*100]
+})
+
+# Membuat bar plot dengan keterangan jumlah
+fig, ax = plt.subplots()
+bars = plt.bar(model_compBest['Model'], model_compBest['Accuracy'], color=['red', 'green', 'blue'])
+plt.xlabel('Model')
+plt.ylabel('Accuracy (%)')
+plt.title('Best Model Comparison')
+plt.xticks(rotation=45, ha='right') #untuk memutar label sumbu x agar lebih mudah dibaca
+
+for bar in bars:
+  yval = bar.get_height()
+  plt.text(bar.get_x() + bar.get_width()/2, yval, round(yval, 2), ha='center', va='bottom')
+
+plt.show()
+
 """**KESIMPULAN**
 
-Dari penelitian di atas setelah melakukan pemodelan dengan algoritma KNN, Random Forestm dan XGBoost dengan berbagai penanganan data seperti Random oversampling SMOTE. Dapat disimpulkan bahwa Random oversampling SMOTE pada model KNN menghasikan akurasi 75.4%, Random Forest 92%, dan XGBoost 90.4%. Selain itu apabila dilakukan normalisasi dan random oversampling SMOTE, maka akan menghasilkan akurasi KNN sebanyak 86.1%, Random Forest 86.1%, dan XGBoost sebanyak 90.4%.
+Dari penelitian di atas setelah melakukan pemodelan dengan algoritma KNN, Random Forestm dan XGBoost dengan berbagai penanganan data seperti Random oversampling SMOTE. Dapat disimpulkan bahwa Random oversampling SMOTE pada model KNN menghasikan akurasi 75.4%, Random Forest 92%, dan XGBoost 90.4%. Selain itu apabila dilakukan normalisasi dan random oversampling SMOTE, maka akan menghasilkan akurasi KNN sebanyak 86.1%, Random Forest 86.1%, dan XGBoost sebanyak 90.4%. Dan menggunakan RandomSearchCV, normalisasi data, menghasilkan akurasi 92.0% untuk KNN dan XGB, dan 90.4% pada Random Forest, yang mana jauh lebih optimal dan tidak memiliki selisih akurasi yang signifikan di setiap tiga metodenya.
 """
