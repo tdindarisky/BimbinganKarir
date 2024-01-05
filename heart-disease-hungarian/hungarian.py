@@ -19,7 +19,7 @@ import streamlit as st
 import time
 import pickle
 
-"""**LOAD DATA**"""
+
 
 
 
@@ -45,7 +45,7 @@ df = df.drop(df.columns[0], axis=1)
 df = df.astype(float)
 df.info()
 
-"""**VALIDASI DATA**"""
+
 
 df.replace(-9.0, np.nan, inplace=True)
 df.isnull().sum()
@@ -54,7 +54,6 @@ df.head()
 
 df.info()
 
-"""**MENENTUKAN OBJECT DATA**"""
 
 df_selected = df.iloc[:, [1, 2, 7, 8, 10, 14, 17, 30, 36, 38, 39, 42, 49, 56]]
 df_selected.head()
@@ -83,7 +82,7 @@ df_selected.info()
 
 df_selected.value_counts()
 
-"""**Membersihkan Data**"""
+
 
 df_selected.isnull().sum()
 
@@ -126,7 +125,7 @@ y = dfClean['target']
 smote = SMOTE(random_state=42)
 X, y = smote.fit_resample(X, y)
 
-model = pickle.load(open("model/xgb_model.pkl", "rb"))
+model = pickle.load(open("heart-disease-hungarian/model/xgb_model.pkl", "rb"))
 
 y_pred = model.predict(X)
 accuracy = accuracy_score(y, y_pred)
