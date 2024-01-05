@@ -1,3 +1,4 @@
+#import library
 import itertools
 import pandas as pd
 import numpy as np
@@ -7,6 +8,7 @@ import streamlit as st
 import time
 import pickle
 
+#membuka dataset
 with open("heart-disease-hungarian/data/hungarian.data", encoding='Latin1') as file:
   lines = [line.strip() for line in file]
 
@@ -24,6 +26,8 @@ df = df.astype(float)
 df.replace(-9.0, np.NaN, inplace=True)
 
 df_selected = df.iloc[:, [1, 2, 7, 8, 10, 14, 17, 30, 36, 38, 39, 42, 49, 56]]
+
+#mengganti nama kolom
 
 column_mapping = {
   2: 'age',
@@ -46,6 +50,8 @@ df_selected.rename(columns=column_mapping, inplace=True)
 
 columns_to_drop = ['ca', 'slope','thal']
 df_selected = df_selected.drop(columns_to_drop, axis=1)
+
+#pengisian nilai null menggunakan nilai mean di setiap kolom
 
 meanTBPS = df_selected['trestbps'].dropna()
 meanChol = df_selected['chol'].dropna()
@@ -86,6 +92,8 @@ y = df_clean['target']
 smote = SMOTE(random_state=42)
 X, y = smote.fit_resample(X, y)
 
+#membuka model
+
 model = pickle.load(open("heart-disease-hungarian/model/xgb_model.pkl", 'rb'))
 
 y_pred = model.predict(X)
@@ -109,6 +117,7 @@ st.write("")
 
 tab1, tab2 = st.tabs(["Single-predict", "Multi-predict"])
 
+#menu sidebar
 with tab1:
   st.sidebar.header("**User Input** Sidebar")
 
