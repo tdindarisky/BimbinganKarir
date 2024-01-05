@@ -13,8 +13,6 @@ import pandas as pd
 import re
 import numpy as np
 import itertools
-from google.colab import data_table
-data_table.enable_dataframe_formatter()
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import accuracy_score
 import streamlit as st
